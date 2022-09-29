@@ -1,0 +1,357 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% include 'navbar.html'%}
+<div class="container">
+    <div class="row">
+
+
+        {% if brand %}
+
+        {% for b in brand.items %}
+        <div class="col-md-3 mt-3">
+            <!--nav class="navbar navbar-default" ,col-md-3 mt-3-->
+            <div class="card">
+                <img src="{{url_for('static',filename='images/'+  b.image_1)}}" alt="{{ b.name}}" class="card-img-top"
+                    height="200" width="200">
+                <div class="card-body">
+                    {%if b.discount > 0%}
+                    <h5
+                        style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-15deg); position:absolute; top:20%; left:20%">
+                        Discount {{b.discount }} %</h5>
+                    {% endif %}
+                    <h5 class="text-center">{{ b.name}}</h5>
+                    <p class="text-center">Price ${{b.price}}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{url_for('single_page', id=b.id)}}" class="float-left btn btn-sm btn-primary">details</a>
+                    
+                    <form action="{{url_for('AddCart')}}" method="POST">
+                        <input type ="hidden" name ="product_id" value="{{b.id}}">
+                        <button type="submit" class ="btn btn-sm btn-warning float-right">Add Cart</button>
+                      
+                        <input type = "hidden" name = "quantity" id="" value="1" >
+                        {% set colors = b.colors.split(',') %}
+                       
+                        <select name="colors" id="colors" style="visibility: hidden;">
+                            {% for color in colors %}
+        
+                            {% set col = color.split(':')%}
+                            <option value="{{col[0]}}">{{col[0]|capitalize}}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+        <div class="row">
+            <div class="col text-center">
+                {% if brand.has_prev %}
+                <a href="{{url_for('get_brand',id=get_b.id, page=get_cat_prod.prev_num)}}" class="btn btn-outline-info btn-sm mt-3">Previus</a>
+                {% endif %}
+                {% if brand.total>8%}
+                {% for page_num in  brand.iter_pages(left_edge=1, right_edge=2, left_current=1, right_current=2) %}
+                {% if page_num %}
+                {% if brand.page== page_num %}
+                <a href="{{url_for('get_brand', id=get_b.id, page=page_num)}}" class="btn btn-info btn-sm mt-3">{{page_num}}</a>
+                {% else %}
+                <a href="{{url_for('get_brand', id=get_b.id, page=page_num)}}" class="btn btn-outline-info btn-sm mt-3">{{page_num}}</a>
+                {% endif %}
+                {% else %}
+                ... 
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+    
+                {% if brand.has_next %}
+                <a href="{{url_for('get_brand',id=get_b.id, page=get_cat_prod.next_num)}}" class="btn btn-outline-info btn-sm mt-3">Next</a>
+                {% endif %}
+        
+    
+            </div>
+    
+            </div>
+    </div>
+       <div class="row"></div>
+        {% elif get_cat_prod %}
+        {% for get_cat in  get_cat_prod.items  %}
+    
+   
+        <div class="col-md-3 mt-3">
+            <!--nav class="navbar navbar-default" ,col-md-3 mt-3-->
+            <div class="card">
+                <img src="{{url_for('static',filename='images/'+ get_cat.image_1)}}" alt="{{get_cat.name}}"
+                    class="card-img-top" height="200">
+                <div class="card-body">
+                    {%if get_cat.discount > 0%}
+                    <h5
+                        style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-15deg); position:absolute; top:20%; left:20%">
+                        Discount {{get_cat.discount }} %</h5>
+                    {% endif %}
+                    <h5 class="text-center">{{get_cat.name}}</h5>
+                    <p class="text-center">Price ${{get_cat.price}}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{url_for('single_page', id=get_cat.id)}}" class="float-left btn btn-sm btn-primary">details</a>
+                    
+                    <form action="{{url_for('AddCart')}}" method="POST">
+                        <input type ="hidden" name ="product_id" value="{{get_cat.id}}">
+                        <button type="submit" class ="btn btn-sm btn-warning float-right">Add Cart</button>
+                      
+                        <input type = "hidden" name = "quantity" id="" value="1">
+                        {% set colors = get_cat.colors.split(',') %}
+                       
+                        <select name="colors" id="colors" style="visibility: hidden;">
+                            {% for color in colors %}
+        
+                            {% set col = color.split(':')%}
+                            <option value="{{col[0]}}">{{col[0]|capitalize}}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        {% endfor %}
+
+       </div>
+       <div class="row">
+        <div class="col text-center">
+            {% if get_cat_prod.has_prev %}
+            <a href="{{url_for('get_category',id=get_cat.id, page=get_cat_prod.prev_num)}}" class="btn btn-outline-info btn-sm mt-3">Previus</a>
+            {% endif %}
+            {% if  get_cat_prod.total > 8 %}
+            {% for page_num in get_cat_prod.iter_pages(left_edge=1, right_edge=2, left_current=1, right_current=2) %}
+            {% if page_num %}
+            {% if get_cat_prod.page== page_num %}
+            <a href="{{url_for('get_category', id=get_cat.id, page=page_num)}}" class="btn btn-info btn-sm mt-3">{{page_num}}</a>
+            {% else %}
+            <a href="{{url_for('get_categor', id=get_cat.id, page=page_num)}}" class="btn btn-outline-info btn-sm mt-3">{{page_num}}</a>
+            {% endif %}
+            {% else %}
+            ... 
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+            {% if get_cat_prod.has_next %}
+            <a href="{{url_for('get_category',id=get_cat.id, page=get_cat_prod.next_num)}}" class="btn btn-outline-info btn-sm mt-3">Next</a>
+            {% endif %}
+    
+
+        </div>
+
+        </div>
+
+       <div class="row">
+
+        {% else %}
+
+        {% for product in products.items %}
+        <div class="col-md-3 mt-3">
+            <div class="card">
+                <img src="{{url_for('static',filename='images/'+ product.image_1)}}" alt="{{ product.name}}"
+                    class="card-img-top" height="200">
+                <div class="card-body">
+                    {%if product.discount > 0%}
+                    <h5
+                        style="text-shadow: 1px 1px 2px #000; color: #f00; transform: rotate(-15deg); position:absolute; top:20%; left:20%">
+                        Discount {{product.discount }} %</h5>
+                    {% endif %}
+                    <h5 class="text-center">{{product.name}}</h5>
+                    <p class="text-center">Price ${{ product.price}}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{url_for('single_page', id=product.id)}}" class="float-left btn btn-sm btn-primary">details</a>
+                    
+                    <form action="{{url_for('AddCart')}}" method="POST">
+                        <input type ="hidden" name ="product_id" value="{{product.id}}">
+                        <button type="submit" class ="btn btn-sm btn-warning float-right">Add Cart</button>
+                      
+                        <input type = "hidden" name = "quantity" id="" value="1" min="1" max="{{product.stock}}">
+                        {% set colors = product.colors.split(',') %}
+                       
+                        <select name="colors" id="colors" style="visibility: hidden;">
+                            {% for color in colors %}
+        
+                            {% set col = color.split(':')%}
+                            <option value="{{col[0]}}">{{col[0]|capitalize}}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+        
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+       </div>
+       <div class="row">
+        <div class="col text-center">
+            {% if products.has_prev %}
+            <a href="{{url_for('home',page=products.prev_num)}}" class="btn btn-outline-info btn-sm mt-3">Previus</a>
+            {% endif %}
+            {% if products.total > 8 %}
+            {% for page_num in products.iter_pages(left_edge=1, right_edge=2, left_current=1, right_current=2) %}
+            {% if page_num %}
+            {% if products.page== page_num%}
+            <a href="{{url_for('home',page=page_num)}}" class="btn btn-info btn-sm mt-3">{{page_num}}</a>
+            {% else %}
+            <a href="{{url_for('home',page=page_num)}}" class="btn btn-outline-info btn-sm mt-3">{{page_num}}</a>
+            {% endif %}
+            {% else %}
+            ... 
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+
+            {% if products.has_next %}
+            <a href="{{url_for('home',page=products.next_num)}}" class="btn btn-outline-info btn-sm mt-3">Next</a>
+            {% endif %}
+    
+
+        </div>
+      
+       </div>
+       
+        {% endif %}
+
+    </div>
+
+</div> <br>
+
+
+
+
+<!-- Footer -->
+<footer class="text-center text-lg-start bg-light text-muted">
+    <!-- Section: Social media -->
+    <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+        <!-- Left -->
+        <div class="me-5 d-none d-lg-block">
+            <span>Get connected with us on social networks:</span>
+        </div>
+        <!-- Left -->
+
+        <!-- Right -->
+        <div>
+            <a href="" class="me-4 text-reset">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="" class="me-4 text-reset">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="" class="me-4 text-reset">
+                <i class="fab fa-google"></i>
+            </a>
+            <a href="" class="me-4 text-reset">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <a href="" class="me-4 text-reset">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="" class="me-4 text-reset">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+        <!-- Right -->
+    </section>
+    <!-- Section: Social media -->
+
+    <!-- Section: Links  -->
+    <section class="">
+        <div class="container text-center text-md-start mt-5">
+            <!-- Grid row -->
+            <div class="row mt-3">
+                <!-- Grid column -->
+                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                    <!-- Content -->
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        <i class="fas fa-gem me-3"></i>Company name
+                    </h6>
+                    <p>
+                        Here you can use rows and columns to organize your footer content. Lorem ipsum
+                        dolor sit amet, consectetur adipisicing elit.
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <!-- Links -->
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        Products
+                    </h6>
+                    <p>
+                        <a href="#!" class="text-reset">Angular</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">React</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Vue</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Laravel</a>
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <!-- Links -->
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        Useful links
+                    </h6>
+                    <p>
+                        <a href="#!" class="text-reset">Pricing</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Settings</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Orders</a>
+                    </p>
+                    <p>
+                        <a href="#!" class="text-reset">Help</a>
+                    </p>
+                </div>
+                <!-- Grid column -->
+
+                <!-- Grid column -->
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                    <!-- Links -->
+                    <h6 class="text-uppercase fw-bold mb-4">
+                        Contact
+                    </h6>
+                    <p><i class="fas fa-home me-3"></i> New York, NY 10012, US</p>
+                    <p>
+                        <i class="fas fa-envelope me-3"></i>
+                        info@example.com
+                    </p>
+                    <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
+                    <p><i class="fas fa-print me-3"></i> + 01 234 567 89</p>
+                </div>
+                <!-- Grid column -->
+            </div>
+            <!-- Grid row -->
+        </div>
+    </section>
+    <!-- Section: Links  -->
+
+    <!-- Copyright -->
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+        © 2021 Copyright:
+        <a class="text-reset fw-bold" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+    </div>
+    <!-- Copyright -->
+</footer>
+<!-- Footer -->
+
+{% endblock content %}
